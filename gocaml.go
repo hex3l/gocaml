@@ -13,13 +13,13 @@ import (
 func main() {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
-		Ocaml_StdinPipe(arg)
+		ExecOcamlProcess(arg)
 	} else {
 		fmt.Fprintln(os.Stdout, "Missing .ml file! Usage: gocaml <ocaml file>")
 	}
 }
 
-func Ocaml_StdinPipe(file string) {
+func ExecOcamlProcess(file string) {
 	cmd := exec.Command("ocaml", "-init", file)
 	cmd.Stderr = os.Stderr
 	stdin, err := cmd.StdinPipe()
@@ -27,9 +27,6 @@ func Ocaml_StdinPipe(file string) {
 		log.Fatalf("Error obtaining stdin: %s", err.Error())
 	}
 	cmd.Stdout = os.Stdout
-	if nil != err {
-		log.Fatalf("Error obtaining stdout: %s", err.Error())
-	}
 	writer := bufio.NewReader(os.Stdin)
 	go FileNewWatcher(stdin, file)
 	go func(writer io.Reader) {
